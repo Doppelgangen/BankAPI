@@ -34,7 +34,7 @@ public class TestContractorsDAO {
     public void shouldAddContractor(){
         Owner o1 = new Owner();
         Owner o2 = new Owner();
-        o1.setId(1L);
+        o1.setId(2L);
         o2.setId(3L);
 
         Assert.assertTrue(contractorDAO.addContractor(o1, o2));

@@ -304,9 +304,10 @@ public class AccountDAOImpl implements AccountDAO {
         if (source.getBalance().compareTo(amount) <= 0) {
             return false;
         }
+        BigDecimal sourceTemp, targetTemp;
+        sourceTemp = source.getBalance().subtract(amount);
+        targetTemp = target.getBalance().add(amount);
 
-        source.setBalance(source.getBalance().subtract(amount));
-        target.setBalance(target.getBalance().add(amount));
 
         try (DBConnection dbc = new DBConnection()) {
             Connection connection = dbc.getConnection();
@@ -318,12 +319,15 @@ public class AccountDAOImpl implements AccountDAO {
                             "END " +
                             "WHERE id IN (?, ?)");
             ps.setLong(1, source.getId());
-            ps.setBigDecimal(2, source.getBalance());
+            ps.setBigDecimal(2, sourceTemp);
             ps.setLong(3, target.getId());
-            ps.setBigDecimal(4, target.getBalance());
+            ps.setBigDecimal(4, targetTemp);
             ps.setLong(5, source.getId());
             ps.setLong(6, target.getId());
             ps.executeUpdate();
+
+            source.setBalance(sourceTemp);
+            target.setBalance(targetTemp);
         } catch (SQLException e){
             logger.write("Error during transfer");
             return false;

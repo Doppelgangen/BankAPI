@@ -50,16 +50,37 @@ public class TestOwnerDAO {
     @Test
     public void shouldGetOwnerByName() throws SQLException {
         Owner owner = new Owner();
-        owner = ownerDAO.getOwnerByName("Timmy");
-        Assert.assertEquals(1L, owner.getId());
+        try (DBConnection dbc = new DBConnection()) {
+            Connection connection = dbc.getConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM owners WHERE id = ?");
+            ps.setLong(1, 1L);
+
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+
+            owner.setId(rs.getLong("id"));
+            owner.setName(rs.getString("name"));
+        }
+        Owner output = ownerDAO.getOwnerByName(owner.getName());
+        Assert.assertTrue(owner.equals(output));
     }
 
     @Test
     public void shouldGetOwnerById() throws SQLException {
         Owner owner = new Owner();
-        owner = ownerDAO.getOwnerById(1L);
+        try (DBConnection dbc = new DBConnection()) {
+            Connection connection = dbc.getConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM owners WHERE id = ?");
+            ps.setLong(1, 1L);
 
-        Assert.assertEquals("Timmy", owner.getName());
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+
+            owner.setId(rs.getLong("id"));
+            owner.setName(rs.getString("name"));
+        }
+        Owner output = ownerDAO.getOwnerById(owner.getId());
+        Assert.assertTrue(owner.equals(output));
     }
 
     @Test

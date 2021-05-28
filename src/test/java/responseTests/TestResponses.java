@@ -55,9 +55,12 @@ public class TestResponses {
     public void shouldGetOwnerByName() throws JsonProcessingException {
         String newURL = URL + "/owners";
         String parameterName = "name";
-        String parameter = "Timmy";
+        String parameter = "Kerry";
+        Owner owner = new Owner();
+        owner.setName(parameter);
+        ownerDAO.persistOwner(owner);
         String result = clientHandler.sendGetWithParameter(newURL, parameterName, parameter);
-        Owner owner = ownerDAO.getOwnerByName(parameter);
+        owner = ownerDAO.getOwnerByName(parameter);
         Owner output = objectMapper.readValue(result, Owner.class);
         Assert.assertTrue(owner.equals(output));
     }
