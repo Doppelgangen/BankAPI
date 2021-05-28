@@ -17,8 +17,9 @@ import java.sql.SQLException;
 
 public class TestAccountDAO {
     AccountDAOImpl accountDAO = new AccountDAOImpl();
+
     @BeforeClass
-    public static void dbInit(){
+    public static void dbInit() {
         if (!DBConnection.initialized)
             DBConnection.init(InitType.TEST);
     }
@@ -52,14 +53,14 @@ public class TestAccountDAO {
     }
 
     @Test
-    public void shouldGetAccountByAccountNumber(){
+    public void shouldGetAccountByAccountNumber() {
         Account account = new Account();
         account = new AccountDAOImpl().getAccountByAccNumber("40884729571209875298", false);
         Assert.assertEquals(1L, account.getId());
     }
 
     @Test
-    public void shouldGetAccountsOnOwner(){
+    public void shouldGetAccountsOnOwner() {
         Owner owner = new Owner();
         owner.setId(1L);
         new AccountDAOImpl().getAccountsOnOwner(owner);
@@ -67,7 +68,7 @@ public class TestAccountDAO {
     }
 
     @Test
-    public void shouldAddToBalance(){
+    public void shouldAddToBalance() {
         Account account = accountDAO.getAccountById(1L);
         BigDecimal value = new BigDecimal("200.00");
         accountDAO.addToBalance(account.getAccNumber(), value);
@@ -76,7 +77,7 @@ public class TestAccountDAO {
     }
 
     @Test
-    public void shouldCreateNewAccount(){
+    public void shouldCreateNewAccount() {
         Owner owner = new Owner();
         owner.setId(1L);
         Account account = accountDAO.createNewAccountByOwner(owner);
@@ -85,14 +86,14 @@ public class TestAccountDAO {
     }
 
     @Test
-    public void shouldFindAccountInDB(){
+    public void shouldFindAccountInDB() {
         Account account = new Account();
         account.setId(1L);
         Assert.assertTrue(accountDAO.isAccountInDB(account));
     }
 
     @Test
-    public void shouldTransferFromOneAccountToOther(){
+    public void shouldTransferFromOneAccountToOther() {
         Account source = accountDAO.getAccountById(1L);
         Account target = accountDAO.getAccountById(2L);
         BigDecimal balanceBeforeTransfer = source.getBalance();

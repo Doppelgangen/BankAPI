@@ -19,6 +19,7 @@ import java.util.List;
 
 public class TestCardDAO {
     CardDAO cardDAO = new CardDAOImpl();
+
     @BeforeClass
     public static void dbInit() {
         if (!DBConnection.initialized)
@@ -118,7 +119,7 @@ public class TestCardDAO {
     }
 
     @Test
-    public void shouldGetCardsByOwner(){
+    public void shouldGetCardsByOwner() {
         Owner owner = new Owner();
         owner.setId(1L);
 

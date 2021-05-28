@@ -37,6 +37,7 @@ public class ContractorIncomeHttpHandler extends BankHttpHandler {
 
     /**
      * Transfer funds from owner's account with enough balance to contractor's first account
+     *
      * @param exchange parameters:"authentication"="token" body:
      *                 Income{"id" (of owner) : long, "target"(id of contractor):long, "income" : BigDecimal}
      * @throws IOException
@@ -72,14 +73,13 @@ public class ContractorIncomeHttpHandler extends BankHttpHandler {
                         if (!contractor.getAccounts().isEmpty() && !owner.getAccounts().isEmpty()) {
                             int sourceAccountId = -1;
 //                            Check if owner have an account with enough balance
-                            for (int i = 0; i < owner.getAccounts().size(); i++){
-                                if (owner.getAccounts().get(i).getBalance().compareTo(income.getIncome()) > 0){
+                            for (int i = 0; i < owner.getAccounts().size(); i++) {
+                                if (owner.getAccounts().get(i).getBalance().compareTo(income.getIncome()) > 0) {
                                     sourceAccountId = i;
                                     break;
                                 }
                             }
-                            if (sourceAccountId == -1)
-                            {
+                            if (sourceAccountId == -1) {
                                 resultOut = "Not enough funds for transfer";
                                 exchange.sendResponseHeaders(403, resultOut.length());
                             } else {

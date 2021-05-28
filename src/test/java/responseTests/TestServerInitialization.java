@@ -7,8 +7,8 @@ import org.junit.Test;
 
 public class TestServerInitialization {
     @Test
-    public void serverShouldStart(){
-        if (!ApplicationServer.initialized){
+    public void serverShouldStart() {
+        if (!ApplicationServer.initialized) {
             new ApplicationServer().init(InitType.TEST);
         }
         Assert.assertTrue(ApplicationServer.initialized);

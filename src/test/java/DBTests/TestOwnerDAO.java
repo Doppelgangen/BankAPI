@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestOwnerDAO {
-    OwnerDAO ownerDAO =new OwnerDAOImpl();
+    OwnerDAO ownerDAO = new OwnerDAOImpl();
 
     @BeforeClass
     public static void dbInit() {
@@ -84,7 +84,7 @@ public class TestOwnerDAO {
     }
 
     @Test
-    public void shouldUpdateOwner() throws SQLException{
+    public void shouldUpdateOwner() throws SQLException {
         Owner owner = new Owner();
         owner.setName("Iggy");
         ownerDAO.persistOwner(owner);
@@ -111,7 +111,7 @@ public class TestOwnerDAO {
     }
 
     @Test
-    public void shouldFindOwnerInDB(){
+    public void shouldFindOwnerInDB() {
         Owner owner = new Owner();
         owner.setId(1L);
         Assert.assertTrue(ownerDAO.isOwnerInDB(owner));

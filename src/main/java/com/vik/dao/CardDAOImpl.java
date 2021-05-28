@@ -271,7 +271,7 @@ public class CardDAOImpl implements CardDAO {
             return cards;
         }
 
-        try (DBConnection dbc = new DBConnection()){
+        try (DBConnection dbc = new DBConnection()) {
             Connection connection = dbc.getConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT C.ID, C.CARD_NUMBER, A.ID, OWNERS.ID " +
                     "FROM OWNERS " +
@@ -282,7 +282,7 @@ public class CardDAOImpl implements CardDAO {
 
             ResultSet resultSet = ps.executeQuery();
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 Card card = new Card();
                 card.setId(resultSet.getLong("cards.id"));
                 card.setCardNumber(resultSet.getLong("card_number"));
@@ -290,7 +290,7 @@ public class CardDAOImpl implements CardDAO {
                 fillCard(card);
                 cards.add(card);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             logger.write("Error getting cards by owner");
             return cards;
         }
@@ -299,6 +299,7 @@ public class CardDAOImpl implements CardDAO {
 
     /**
      * Checks if a card is in DB by its id
+     *
      * @param card to search
      * @return true if card is in DB
      */
@@ -331,13 +332,14 @@ public class CardDAOImpl implements CardDAO {
 
     /**
      * Fills card data up to it's owner if it is empty
+     *
      * @param card to fill
      */
-    private void fillCard(Card card){
+    private void fillCard(Card card) {
         if (card.getAccount().getOwner().getAccounts().isEmpty())
-        card.getAccount().getOwner().getAccounts().add(card.getAccount());
+            card.getAccount().getOwner().getAccounts().add(card.getAccount());
 
         if (card.getAccount().getCards().isEmpty())
-        card.getAccount().getCards().add(card);
+            card.getAccount().getCards().add(card);
     }
 }

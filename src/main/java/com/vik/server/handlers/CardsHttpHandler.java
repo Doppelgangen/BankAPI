@@ -38,7 +38,7 @@ public class CardsHttpHandler extends BankHttpHandler {
         String resultOut = "";
 
 //        Checks if parameters are present
-        if (params == null){
+        if (params == null) {
             resultOut = "Parameters not set";
             exchange.sendResponseHeaders(400, resultOut.length());
         } else {
@@ -60,15 +60,15 @@ public class CardsHttpHandler extends BankHttpHandler {
                     exchange.sendResponseHeaders(404, resultOut.length());
                 }
 //                Check card in DB by it's card number
-            } else if (isCardNumberSet){
+            } else if (isCardNumberSet) {
                 String cardNumber = "";
                 String[] temp = params.get("cardNumber").split(" ");
-                for (String s : temp ){
+                for (String s : temp) {
                     cardNumber += s;
                 }
                 card.setCardNumber(Long.parseLong(cardNumber));
                 card = cardDAO.getCardByNumber(card.getCardNumber(), false);
-                if (card.getId() != 0){
+                if (card.getId() != 0) {
                     resultOut = objectMapper.writeValueAsString(card.getAccount().getOwner());
                     exchange.sendResponseHeaders(200, resultOut.length());
                 } else {

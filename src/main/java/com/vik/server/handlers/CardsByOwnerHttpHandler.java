@@ -11,7 +11,6 @@ import com.vik.models.Card;
 import com.vik.models.Owner;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -27,6 +26,7 @@ public class CardsByOwnerHttpHandler extends BankHttpHandler {
 
     /**
      * Returns list of all cards by provided owner's id
+     *
      * @param exchange id = long
      * @throws IOException
      */

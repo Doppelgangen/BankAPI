@@ -13,7 +13,7 @@ public abstract class BankHttpHandler implements HttpHandler {
     Logger logger = new LoggerImpl();
 
     @Override
-    public void handle(HttpExchange exchange){
+    public void handle(HttpExchange exchange) {
         try {
             if ("GET".equals(exchange.getRequestMethod())) {
                 handleGetRequest(exchange);

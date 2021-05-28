@@ -16,32 +16,32 @@ import java.util.List;
 /**
  * Implementation of operations with entity Contractor
  */
-public class ContractorsDAOImpl implements ContractorDAO{
+public class ContractorsDAOImpl implements ContractorDAO {
     Logger logger = new LoggerImpl();
     OwnerDAO ownerDAO = new OwnerDAOImpl();
 
     /**
      * Sets one owner as contractor to other owner
      *
-     * @param owner with id
+     * @param owner      with id
      * @param contractor with id
      * @return true if add is successful
      */
     @Override
     public boolean addContractor(Owner owner, Owner contractor) {
         if (owner == null || contractor == null || owner.getId() == 0L ||
-                contractor.getId() == 0L || owner.getId() == contractor.getId()){
+                contractor.getId() == 0L || owner.getId() == contractor.getId()) {
             logger.write("Fill contractors");
             return false;
         }
-        if (ownerDAO.isOwnerInDB(owner) && ownerDAO.isOwnerInDB(contractor)){
-            try (DBConnection dbc = new DBConnection()){
+        if (ownerDAO.isOwnerInDB(owner) && ownerDAO.isOwnerInDB(contractor)) {
+            try (DBConnection dbc = new DBConnection()) {
                 Connection connection = dbc.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(
                         "SELECT CONTRACTOR_ID FROM CONTRACTORS WHERE OWNER_ID = ?");
                 preparedStatement.setLong(1, owner.getId());
                 ResultSet resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()){
+                while (resultSet.next()) {
                     long l = resultSet.getLong("contractor_id");
                     if (l == contractor.getId()) {
                         logger.write("Contractor already added");
@@ -66,13 +66,14 @@ public class ContractorsDAOImpl implements ContractorDAO{
 
     /**
      * Get contractor object, containing list of contractors of provided owner
+     *
      * @param owner with id
      * @return contractor
      */
     @Override
     public Contractor getContractorsByOwner(Owner owner) {
         Contractor contractor = new Contractor();
-        if (owner == null || owner.getId() == 0L){
+        if (owner == null || owner.getId() == 0L) {
             logger.write("Fill owner to get contractors");
             return contractor;
         }

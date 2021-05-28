@@ -2,8 +2,6 @@ package DBTests;
 
 import com.vik.dao.ContractorDAO;
 import com.vik.dao.ContractorsDAOImpl;
-import com.vik.dao.OwnerDAO;
-import com.vik.dao.OwnerDAOImpl;
 import com.vik.models.Contractor;
 import com.vik.models.Owner;
 import com.vik.service.DBConnection;
@@ -13,7 +11,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestContractorsDAO {
-    OwnerDAO ownerDAO =new OwnerDAOImpl();
     ContractorDAO contractorDAO = new ContractorsDAOImpl();
 
     @BeforeClass
@@ -23,7 +20,7 @@ public class TestContractorsDAO {
     }
 
     @Test
-    public void shouldFindContractors(){
+    public void shouldFindContractors() {
         Owner owner = new Owner();
         owner.setId(1L);
         Contractor contractor = contractorDAO.getContractorsByOwner(owner);
@@ -31,7 +28,7 @@ public class TestContractorsDAO {
     }
 
     @Test
-    public void shouldAddContractor(){
+    public void shouldAddContractor() {
         Owner o1 = new Owner();
         Owner o2 = new Owner();
         o1.setId(2L);

@@ -25,7 +25,7 @@ public class TestResponses {
     String URL = "http://localhost:8080";
 
     @BeforeClass
-    public static void init(){
+    public static void init() {
         if (!ApplicationServer.initialized)
             new ApplicationServer().init(InitType.TEST);
         if (!DBConnection.initialized)
@@ -95,7 +95,7 @@ public class TestResponses {
         owner = ownerDAO.getOwnerById(1L);
         String result = clientHandler.sendPostOwner(newURL, id, "");
         accountDAO.getAccountsOnOwner(owner);
-        Account account = owner.getAccounts().get(owner.getAccounts().size()-1);
+        Account account = owner.getAccounts().get(owner.getAccounts().size() - 1);
         Owner output = objectMapper.readValue(result, Owner.class);
         Assert.assertTrue(account.equals(output.getAccounts().get(0)));
     }

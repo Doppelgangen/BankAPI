@@ -55,6 +55,7 @@ public class BalanceHttpHandler extends BankHttpHandler {
     /**
      * Adds an income to the balance of an account
      * Parameter authentication should be valid to process operation
+     *
      * @param exchange parameters:"authentication"="token" body: Income{"id":long, "income":BigDecimal}
      * @throws IOException
      */

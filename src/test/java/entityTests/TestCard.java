@@ -13,7 +13,7 @@ public class TestCard {
     }
 
     @Test
-    public void shouldNotSplitCardNumber(){
+    public void shouldNotSplitCardNumber() {
         Card card = new Card();
         card.setCardNumber(30003L);
         Assert.assertEquals("30003", card.getCardNumberSplit());
