@@ -24,13 +24,13 @@ public class DBConnection implements AutoCloseable {
     public static void init(InitType initType) {
 
         final String URL_INIT_DEV = "jdbc:h2:mem:default;INIT=runscript from " +
-                "'/Users/makarovviktor/IdeaProjects/BankAPI/src/main/resources/create.sql'\\;" +
+                "'classpath:create.sql'\\;" +
                 "runscript from " +
-                "'/Users/makarovviktor/IdeaProjects/BankAPI/src/main/resources/init.sql';DB_CLOSE_DELAY=-1";
+                "'classpath:init.sql';DB_CLOSE_DELAY=1000";
         final String URL_INIT_TEST = "jdbc:h2:mem:default;INIT=runscript from " +
-                "'/Users/makarovviktor/IdeaProjects/BankAPI/src/test/resources/create.sql'\\;" +
+                "'classpath:createTest.sql'\\;" +
                 "runscript from " +
-                "'/Users/makarovviktor/IdeaProjects/BankAPI/src/test/resources/init.sql';DB_CLOSE_DELAY=-1";
+                "'classpath:initTest.sql';DB_CLOSE_DELAY=1000";
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {

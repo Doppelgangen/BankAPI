@@ -35,11 +35,8 @@ public class ApplicationServer {
             logger.write("Server started on port 8080");
             initialized = true;
             if (initType == InitType.DEV) {
-//                while (true) {
-                    Application.application();
-//                }
+                Application.application();
             }
-            server.stop(0);
         } catch (IOException ioException) {
             ioException.printStackTrace();
             logger.write("Server start error");

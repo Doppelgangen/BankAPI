@@ -16,19 +16,12 @@ public class Application {
     }
 
     public static void application() throws IOException {
-        ClientHandler clientHandler = new ClientHandler();
         Scanner scanner = new Scanner(System.in);
         Integer i = scanner.nextInt();
         if (i == 1) {
-            System.out.println("Введите ID :");
-            i = scanner.nextInt();
-            System.out.println(clientHandler.templateRequest("http://localhost:8080/owners", i.longValue()));
-        } else if (i == 2) {
-
-        } else if (i == 3) {
-        } else if (i == 4) {
-        } else
             return;
+        }
+        return;
     }
 
     private static void printMenu() {

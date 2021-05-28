@@ -36,9 +36,9 @@ public class ContractorIncomeHttpHandler extends BankHttpHandler {
     }
 
     /**
-     * Adds income to first account of a contractor by his id
-     * Parameter authentication should be valid to process operation
-     * @param exchange parameters:"authentication"="token" body: Income{"id" (of owner) : long, "income" : BigDecimal}
+     * Transfer funds from owner's account with enough balance to contractor's first account
+     * @param exchange parameters:"authentication"="token" body:
+     *                 Income{"id" (of owner) : long, "target"(id of contractor):long, "income" : BigDecimal}
      * @throws IOException
      */
     @Override
@@ -54,20 +54,42 @@ public class ContractorIncomeHttpHandler extends BankHttpHandler {
         } else {
             String confirmation = params.get("authentication");
 
+//            Check for authentication
             if (confirmation.equals("token")) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Income income = objectMapper.readValue(requestBody, Income.class);
+//                Check for positive transfer
                 if (income.getIncome().compareTo(new BigDecimal("0")) > 0) {
                     OwnerDAO ownerDAO = new OwnerDAOImpl();
                     AccountDAO accountDAO = new AccountDAOImpl();
-                    Owner contractor = ownerDAO.getOwnerById(income.getId());
-                    if (ownerDAO.isOwnerInDB(contractor)) {
+                    Owner owner = ownerDAO.getOwnerById(income.getId());
+                    Owner contractor = ownerDAO.getOwnerById(income.getTarget());
+//                    Check if contractor and owner in DB
+                    if (ownerDAO.isOwnerInDB(contractor) && ownerDAO.isOwnerInDB(owner)) {
+                        accountDAO.getAccountsOnOwner(owner);
                         accountDAO.getAccountsOnOwner(contractor);
-                        if (!contractor.getAccounts().isEmpty()) {
-                            accountDAO.addToBalance(contractor.getAccounts().get(0).getAccNumber(), income.getIncome());
-                            Account account = accountDAO.getAccountById(contractor.getAccounts().get(0).getId());
-                            resultOut = objectMapper.writeValueAsString(account.getOwner());
-                            exchange.sendResponseHeaders(200, resultOut.length());
+//                        Check if contractor and owner have accounts
+                        if (!contractor.getAccounts().isEmpty() && !owner.getAccounts().isEmpty()) {
+                            int sourceAccountId = -1;
+//                            Check if owner have an account with enough balance
+                            for (int i = 0; i < owner.getAccounts().size(); i++){
+                                if (owner.getAccounts().get(i).getBalance().compareTo(income.getIncome()) > 0){
+                                    sourceAccountId = i;
+                                    break;
+                                }
+                            }
+                            if (sourceAccountId == -1)
+                            {
+                                resultOut = "Not enough funds for transfer";
+                                exchange.sendResponseHeaders(403, resultOut.length());
+                            } else {
+                                accountDAO
+                                        .transfer(owner.getAccounts().get(sourceAccountId)
+                                                , contractor.getAccounts().get(0), income.getIncome());
+                                Account account = accountDAO.getAccountById(contractor.getAccounts().get(0).getId());
+                                resultOut = objectMapper.writeValueAsString(account.getOwner());
+                                exchange.sendResponseHeaders(200, resultOut.length());
+                            }
                         } else {
                             resultOut = "Accounts not found";
                             exchange.sendResponseHeaders(404, resultOut.length());
@@ -81,7 +103,7 @@ public class ContractorIncomeHttpHandler extends BankHttpHandler {
                 }
             } else {
                 resultOut = "Not confirmed";
-                exchange.sendResponseHeaders(401, resultOut.length());
+                exchange.sendResponseHeaders(400, resultOut.length());
             }
         }
         OutputStream outputStream = exchange.getResponseBody();

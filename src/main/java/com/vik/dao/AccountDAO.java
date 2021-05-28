@@ -14,4 +14,5 @@ public interface AccountDAO {
     void addToBalance(String accNumber, BigDecimal amount);
     Account createNewAccountByOwner(Owner owner);
     boolean isAccountInDB(Account account);
+    boolean transfer(Account source, Account target, BigDecimal amount);
 }

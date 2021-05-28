@@ -24,7 +24,8 @@ public class OwnerHttpHandler extends BankHttpHandler {
 
     /**
      * Reads an id and returns an owner with this id,
-     * If id is set to 0: get all owners
+     * If id is set to 0: get all owners,
+     * If id is absent but name is set returns owner with this name
      * In case if id is absent in DB returns String "Wrong id"
      *
      * @param exchange id = long
@@ -34,24 +35,60 @@ public class OwnerHttpHandler extends BankHttpHandler {
     public void handleGetRequest(HttpExchange exchange) throws IOException {
         Map<String, String> params = QueryMapper.queryToMap(exchange.getRequestURI().getQuery());
         ObjectMapper objectMapper = new ObjectMapper();
-        //get Owner by his id
         Owner owner = new Owner();
         String resultOut = "";
-        Long l = Long.parseLong(params.get("id"));
-        owner.setId(l);
-
-        if (owner.getId() == 0) {
-            List<Owner> owners = ownerDAO.getAllOwners();
-            resultOut = objectMapper.writeValueAsString(owners);
-            exchange.sendResponseHeaders(200, resultOut.length());
+        if (params == null) {
+            resultOut = "No parameters";
+            exchange.sendResponseHeaders(400, resultOut.length());
         } else {
-            if (ownerDAO.isOwnerInDB(owner)) {
-                accountDAO.getAccountsOnOwner(owner);
-                resultOut = objectMapper.writeValueAsString(owner);
-                exchange.sendResponseHeaders(200, resultOut.length());
+            boolean idIsSet = (params.get("id") != null) && !params.get("id").equals("");
+            boolean nameIsSet = (params.get("name") != null) && !params.get("name").equals("");
+
+//        Check for parameters
+            if (idIsSet) {
+                long l = Long.parseLong(params.get("id"));
+                owner.setId(l);
+            } else if (nameIsSet) {
+                owner.setName(params.get("name"));
             } else {
-                resultOut = "Wrong id";
-                exchange.sendResponseHeaders(404, resultOut.length());
+                resultOut = "Parameters not set";
+                exchange.sendResponseHeaders(400, resultOut.length());
+            }
+
+//        Check if a parameter id is set to 0 to display all owners
+            if (idIsSet) {
+                if (owner.getId() == 0L) {
+                    List<Owner> owners = ownerDAO.getAllOwners();
+                    resultOut = objectMapper.writeValueAsString(owners);
+                    exchange.sendResponseHeaders(200, resultOut.length());
+                }
+
+//                If id is not 0 check DB for such id
+                if (owner.getId() != 0L) {
+                    if (ownerDAO.isOwnerInDB(owner)) {
+                        owner = ownerDAO.getOwnerById(owner.getId());
+                        accountDAO.getAccountsOnOwner(owner);
+                        resultOut = objectMapper.writeValueAsString(owner);
+                        exchange.sendResponseHeaders(200, resultOut.length());
+                    } else {
+                        resultOut = "Wrong id";
+                        exchange.sendResponseHeaders(404, resultOut.length());
+                    }
+                }
+
+//        Check DB by owner's name
+            } else if (nameIsSet) {
+                if (!owner.getName().equals("")) {
+                    owner = ownerDAO.getOwnerByName(owner.getName());
+                    if (owner.getId() == 0L) {
+                        resultOut = "Wrong name";
+                        exchange.sendResponseHeaders(404, resultOut.length());
+                    } else {
+                        accountDAO.getAccountsOnOwner(owner);
+                        resultOut = objectMapper.writeValueAsString(owner);
+                        exchange.sendResponseHeaders(200, resultOut.length());
+                    }
+                }
             }
         }
         OutputStream out = exchange.getResponseBody();
@@ -74,8 +111,8 @@ public class OwnerHttpHandler extends BankHttpHandler {
         InputStream requestBody = exchange.getRequestBody();
 
         Owner owner = objectMapper.readValue(requestBody, Owner.class);
-        ownerDAO.persistOwner(owner);
-        owner = ownerDAO.getOwnerByName(owner.getName());
+        if (ownerDAO.persistOwner(owner))
+            owner = ownerDAO.getOwnerByName(owner.getName());
 
         String resultOut = objectMapper.writeValueAsString(owner);
 

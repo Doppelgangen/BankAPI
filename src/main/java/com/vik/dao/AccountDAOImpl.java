@@ -277,6 +277,7 @@ public class AccountDAOImpl implements AccountDAO {
 
     /**
      * Checks if an account is in DB by its id
+     *
      * @param account to search
      * @return true if account in DB, else return false
      */
@@ -289,11 +290,54 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     /**
+     * Transfer amount from one account to other
+     * @param source for withdrawal
+     * @param target for deposit
+     * @param amount to transfer
+     * @return
+     */
+    @Override
+    public boolean transfer(Account source, Account target, BigDecimal amount) {
+        if (!isAccountInDB(source) || !isAccountInDB(target))
+            return false;
+
+        if (source.getBalance().compareTo(amount) <= 0) {
+            return false;
+        }
+
+        source.setBalance(source.getBalance().subtract(amount));
+        target.setBalance(target.getBalance().add(amount));
+
+        try (DBConnection dbc = new DBConnection()) {
+            Connection connection = dbc.getConnection();
+            PreparedStatement ps = connection.prepareStatement(
+                    "UPDATE accounts SET balance = CASE id " +
+                            "WHEN ? THEN ? " +
+                            "WHEN ? THEN ?" +
+                            "ELSE balance " +
+                            "END " +
+                            "WHERE id IN (?, ?)");
+            ps.setLong(1, source.getId());
+            ps.setBigDecimal(2, source.getBalance());
+            ps.setLong(3, target.getId());
+            ps.setBigDecimal(4, target.getBalance());
+            ps.setLong(5, source.getId());
+            ps.setLong(6, target.getId());
+            ps.executeUpdate();
+        } catch (SQLException e){
+            logger.write("Error during transfer");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Fills account's owner's data if it is empty
+     *
      * @param account
      */
     private void fillAccount(Account account) {
         if (account.getOwner().getAccounts().isEmpty())
-        account.getOwner().getAccounts().add(account);
+            account.getOwner().getAccounts().add(account);
     }
 }

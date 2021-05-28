@@ -2,7 +2,7 @@ INSERT INTO owners (name)
 VALUES ('Bob');
 
 INSERT INTO accounts(balance, acc_number, owner_id)
-VALUES (500.33, '40884729571209875298', (SELECT id FROM owners WHERE name = 'Bob'));
+VALUES (5000.33, '40884729571209875298', (SELECT id FROM owners WHERE name = 'Bob'));
 
 INSERT INTO cards (card_number, account_id)
 VALUES (1111111111111111,

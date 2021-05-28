@@ -3,59 +3,178 @@ package com.vik.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vik.dao.OwnerDAO;
 import com.vik.dao.OwnerDAOImpl;
+import com.vik.models.Account;
+import com.vik.models.Income;
 import com.vik.models.Owner;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ClientHandler {
-    OwnerDAO ownerDAO = new OwnerDAOImpl();
 
-    public String templateRequest(String Url, Long ownerId) throws IOException {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("id", "1");
-        Owner owner = ownerDAO.getOwnerById(ownerId);
-        ObjectMapper mapper = new ObjectMapper();
+    public String sendGetById(String URL, Long id) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(URL);
+        stringBuilder.append("?id=");
+        stringBuilder.append(id);
+        String fullURL = stringBuilder.toString();
+        HttpClient httpClient = HttpClientBuilder.create().build();
 
-        URL url = new URL(Url);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestMethod("GET");
-        con.setDoOutput(true);
-
-        DataOutputStream out = new DataOutputStream(con.getOutputStream());
-        String par = getParametersString(parameters);
-        out.writeBytes(par);
-
-//        OutputStream out = con.getOutputStream();
-//        mapper.writeValue(out, owner);
-        out.flush();
-        out.close();
-
-        InputStream inputStream = con.getInputStream();
-        owner = mapper.readValue(inputStream, Owner.class);
-        String output = mapper.writeValueAsString(owner);
-        inputStream.close();
-        return output;
+        try {
+            HttpGet request = new HttpGet(fullURL);
+            request.addHeader("content-type", "application/json");
+            HttpResponse response = httpClient.execute(request);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
-    private String getParametersString(Map<String, String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-
-        for (Map.Entry<String, String> entry : params.entrySet()){
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            result.append("&");
+    public String sendGetWithParameter(String URL, String parameterName, String parameter) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(URL);
+        stringBuilder.append("?");
+        stringBuilder.append(parameterName);
+        stringBuilder.append("=");
+        stringBuilder.append(parameter);
+        String fullURL = stringBuilder.toString();
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            HttpGet request = new HttpGet(fullURL);
+            request.addHeader("content-type", "application/json");
+            HttpResponse response = httpClient.execute(request);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+        return null;
+    }
 
-        String resultString  = result.toString();
-        return resultString.length() > 0
-                ? resultString.substring(0, resultString.length() - 1)
-                : resultString;
+    public String sendPostOwner(String URL, Long id, String name){
+        Owner owner = new Owner();
+        owner.setId(id);
+        owner.setName(name);
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            HttpPost request = new HttpPost(URL);
+            String JSON_STRING = mapper.writeValueAsString(owner);
+            request.addHeader("content-type", "application/json");
+            request.setEntity(new StringEntity(JSON_STRING, ContentType.APPLICATION_JSON));
+
+            HttpResponse response = httpClient.execute(request);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public String sendPostIncomeWithAuthentication(String URL, Long id, BigDecimal amount, String authentication){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(URL);
+        stringBuilder.append("?authentication=");
+        stringBuilder.append(authentication);
+        String fullURL = stringBuilder.toString();
+        Income income = new Income();
+        income.setId(id);
+        income.setIncome(amount);
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            HttpPost request = new HttpPost(URL);
+            String JSON_STRING = mapper.writeValueAsString(income);
+            request.addHeader("content-type", "application/json");
+            request.setEntity(new StringEntity(JSON_STRING, ContentType.APPLICATION_JSON));
+
+            HttpResponse response = httpClient.execute(request);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public String sendPostAccount(String URL, Long id){
+        Account account = new Account();
+        account.setId(id);
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            HttpPost request = new HttpPost(URL);
+            String JSON_STRING = mapper.writeValueAsString(account);
+            request.addHeader("content-type", "application/json");
+            request.setEntity(new StringEntity(JSON_STRING, ContentType.APPLICATION_JSON));
+
+            HttpResponse response = httpClient.execute(request);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public String sendPostListLong(String URL, Long id1, Long id2){
+        List<Long> longs = new ArrayList<>();
+        longs.add(id1);
+        longs.add(id2);
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            HttpPost request = new HttpPost(URL);
+            String JSON_STRING = mapper.writeValueAsString(longs);
+            request.addHeader("content-type", "application/json");
+            request.setEntity(new StringEntity(JSON_STRING, ContentType.APPLICATION_JSON));
+
+            HttpResponse response = httpClient.execute(request);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    private String postBeatify(String URL, Object object){
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            HttpPost request = new HttpPost(URL);
+            String JSON_STRING = mapper.writeValueAsString(object);
+            request.addHeader("content-type", "application/json");
+            request.setEntity(new StringEntity(JSON_STRING, ContentType.APPLICATION_JSON));
+
+            HttpResponse response = httpClient.execute(request);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }

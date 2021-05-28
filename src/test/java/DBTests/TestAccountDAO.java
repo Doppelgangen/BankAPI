@@ -90,4 +90,18 @@ public class TestAccountDAO {
         account.setId(1L);
         Assert.assertTrue(accountDAO.isAccountInDB(account));
     }
+
+    @Test
+    public void shouldTransferFromOneAccountToOther(){
+        Account source = accountDAO.getAccountById(1L);
+        Account target = accountDAO.getAccountById(2L);
+        BigDecimal balanceBeforeTransfer = source.getBalance();
+        BigDecimal value = new BigDecimal("200");
+
+        accountDAO.transfer(source, target, value);
+        Account sourceOut = accountDAO.getAccountById(1L);
+        BigDecimal balanceAfterTransfer = sourceOut.getBalance();
+        BigDecimal testValue = balanceBeforeTransfer.subtract(value);
+        Assert.assertTrue(balanceAfterTransfer.equals(testValue));
+    }
 }

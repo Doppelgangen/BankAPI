@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 public class Income {
     private long id = 0L;
+    private long target = 0L;
     private String accountNumber = "";
     private BigDecimal currentBalance = new BigDecimal("0.00");
     @JsonIgnore
@@ -47,5 +48,15 @@ public class Income {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    @JsonIgnore
+    public long getTarget() {
+        return target;
+    }
+
+    @JsonProperty
+    public void setTarget(long target) {
+        this.target = target;
     }
 }

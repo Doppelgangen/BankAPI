@@ -65,11 +65,13 @@ public class Account {
         if (this == o) return true;
         if (!(o instanceof Account)) return false;
         Account account = (Account) o;
-        return id == account.id && accNumber == account.accNumber;
+        return id == account.id
+                && Objects.equals(accNumber, account.accNumber)
+                && Objects.equals(balance, account.balance);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, balance, accNumber, owner);
+        return Objects.hash(id, accNumber, balance);
     }
 }

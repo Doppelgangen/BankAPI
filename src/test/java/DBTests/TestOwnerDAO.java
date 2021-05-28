@@ -40,8 +40,10 @@ public class TestOwnerDAO {
             ResultSet rs = ps.executeQuery();
             rs.next();
 
-            long out = rs.getLong("id");
-            Assert.assertEquals(owner.getId(), out);
+            Owner output = new Owner();
+            output.setName(rs.getString("name"));
+            output.setId(rs.getLong("id"));
+            Assert.assertTrue(owner.equals(output));
         }
     }
 
