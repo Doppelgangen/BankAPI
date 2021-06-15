@@ -17,8 +17,8 @@ import java.util.List;
  * Implementation of operations with entity Contractor
  */
 public class ContractorsDAOImpl implements ContractorDAO {
-    Logger logger = new LoggerImpl();
-    OwnerDAO ownerDAO = new OwnerDAOImpl();
+    private Logger logger = new LoggerImpl();
+    private OwnerDAO ownerDAO = new OwnerDAOImpl();
 
     /**
      * Sets one owner as contractor to other owner

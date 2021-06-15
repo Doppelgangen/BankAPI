@@ -18,7 +18,7 @@ import java.util.List;
  * Implementation of operations with an entity Account
  */
 public class AccountDAOImpl implements AccountDAO {
-    Logger logger = new LoggerImpl();
+    private Logger logger = new LoggerImpl();
 
     /**
      * Persists an account to DB,

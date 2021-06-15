@@ -17,7 +17,7 @@ import java.util.List;
  * Implementation of operations with entity Card via DB
  */
 public class CardDAOImpl implements CardDAO {
-    LoggerImpl logger = new LoggerImpl();
+    private LoggerImpl logger = new LoggerImpl();
 
     /**
      * Persists a card to DB,

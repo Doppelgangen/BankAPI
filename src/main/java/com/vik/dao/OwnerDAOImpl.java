@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 public class OwnerDAOImpl implements OwnerDAO {
-    Logger logger = new LoggerImpl();
+    private Logger logger = new LoggerImpl();
 
     /**
      * Returns set of all owners
