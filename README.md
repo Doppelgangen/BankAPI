@@ -1,2 +1,2 @@
 # BankAPI
-Basic BANK API presentation made on handles and prepare statmens.
+Basic BANK API presentation made on handles and prepared statmens.
